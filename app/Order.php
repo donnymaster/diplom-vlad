@@ -19,4 +19,14 @@ class Order extends Model
         'cost',
         'notification_order_id'
     ];
+
+    public function designer()
+    {
+        return $this->belongsTo(DesignPerformer::class, 'design_performer_id');
+    }
+
+    public function typeDesign()
+    {
+        return $this->belongsTo(DesignType::class, 'design_type_id');
+    }
 }

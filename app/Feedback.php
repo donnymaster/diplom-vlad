@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Feedback extends Model
 {
-    protected $table = 'notification_order';
+    protected $table = 'feedback';
 
     protected $fillable = [
         'user_id',
@@ -14,5 +14,10 @@ class Feedback extends Model
         'description',
         'attachment'
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 
 }

@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,14 +14,20 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/', 'HomeController@index')->name('index');
 
-Auth::routes();
+Route::resource('designers', 'DesignerController');
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::resource('orders', 'OrderController');
+
+Route::resource('feedbacks', 'FeedbackController');
+
+// get ajax designers - typehead
+Route::get('get-designers', 'DesignerController@getDesignersAjax')->name('get-designers');
+// get ajax user orders
+Route::get('get-orders', 'OrderController@orderAjaxUser')->name('get-orders');
+// get ajax admin feedback
+Route::get('get-feedback', 'FeedbackController@getFeedbackAjax')->name('get-feedback');

@@ -1,0 +1,13 @@
+span.twitter-typeahead {
+    width: 100%;
+}
+.designer_item {
+    background-color: #f7f7f7;
+    padding: 5px;
+}
+.cursor{
+    cursor: pointer;
+}
+.no-cursor{
+    cursor: context-menu;
+}

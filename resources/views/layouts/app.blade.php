@@ -11,7 +11,7 @@
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
-    <script src="{{ asset('js/rating.js') }}"></script>
+    {{-- <script src="{{ asset('js/rating.js') }}"></script> --}}
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -20,10 +20,12 @@
     <!-- Styles -->
     <link rel="stylesheet" href="{{ asset('css/rating.css') }}">
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/custom-css.css') }}">
+    @yield('custom-css')
 </head>
-<body>
+<body class="bg-default">
     <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
+        {{-- <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
                     {{ config('app.name', 'Laravel') }}
@@ -72,11 +74,40 @@
                     </ul>
                 </div>
             </div>
-        </nav>
+        </nav> --}}
+
+        <nav class="navbar navbar-expand-md bg-dark navbar-dark">
+            <div class="container">
+            <!-- Brand -->
+            <a class="navbar-brand" href="{{ url('/') }}">{{ config('app.name') }}</a>
+          
+            <!-- Toggler/collapsibe Button -->
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+          
+            <!-- Navbar links -->
+            <div class="collapse navbar-collapse justify-content-end" id="collapsibleNavbar">
+                <ul class="navbar-nav">
+                    @if (Auth::check())
+                    @include('blocks.user-menu')
+                    @else
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('login') }}">Вхід</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('register') }}">Реєстрація</a>
+                        </li>
+                    @endif
+                </ul>
+                </div>
+            </div>
+          </nav>
 
         <main class="py-4">
             @yield('content')
         </main>
     </div>
+    @yield('custom-js')
 </body>
 </html>

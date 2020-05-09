@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class NotificationOrderToOrder extends Migration
+class AddAvatarDesigner extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,8 @@ class NotificationOrderToOrder extends Migration
      */
     public function up()
     {
-        Schema::table('order', function (Blueprint $table) {
-            $table->unsignedBigInteger('notification_order_id')->nullable();
-            $table->foreign('notification_order_id')->references('id')->on('notification_order');
+        Schema::table('design_performer', function (Blueprint $table) {
+            $table->string('avatar', 500);
         });
     }
 
@@ -26,6 +25,8 @@ class NotificationOrderToOrder extends Migration
      */
     public function down()
     {
-        Schema::dropForeign(['notification_order_id']);
+        Schema::table('design_performer', function (Blueprint $table) {
+            $table->dropColumn('avatar');
+        });
     }
 }

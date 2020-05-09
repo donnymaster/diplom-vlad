@@ -13,5 +13,7 @@ class UserRole extends Model
         'role_name'
     ];
 
-
+    public function user(){
+        return $this->hasOne(User::class, 'role_id');
+    }
 }

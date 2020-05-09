@@ -20,7 +20,7 @@ class Order extends Migration
             $table->unsignedBigInteger('design_type_id');
             $table->string('title');
             $table->text('description');
-            $table->json('attachment');
+            $table->json('attachment')->nullable();
             $table->string('broadcast_identifier');
             $table->integer('cost');
 

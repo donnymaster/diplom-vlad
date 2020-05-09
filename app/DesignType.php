@@ -12,4 +12,8 @@ class DesignType extends Model
         'design_name'
     ];
 
+    public function order()
+    {
+        return $this->hasOne(Order::class, 'design_type_id');
+    }
 }
