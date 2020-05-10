@@ -29,5 +29,21 @@ Route::resource('feedbacks', 'FeedbackController');
 Route::get('get-designers', 'DesignerController@getDesignersAjax')->name('get-designers');
 // get ajax user orders
 Route::get('get-orders', 'OrderController@orderAjaxUser')->name('get-orders');
-// get ajax admin feedback
-Route::get('get-feedback', 'FeedbackController@getFeedbackAjax')->name('get-feedback');
+
+Route::group(['middleware' => 'admin', 'middleware' => 'auth'], function(){
+    // get ajax admin feedback
+    Route::get('get-feedback', 'FeedbackController@getFeedbackAjax')->name('get-feedback');
+
+    Route::post('answer', 'FeedbackController@answer')->name('feedback.answer');
+    // get ajax admin designers
+    Route::get('get-designers', 'DesignerController@alldesigerAdmin')->name('all.designers');
+    // table admin designers
+    Route::get('all-designers', 'DesignerController@alldesigerAdminAjax')->name('get-designers');
+    // admin all orders
+    Route::get('orders-admin', 'OrderController@adminOdersShow')->name('orders.admin');
+    // admin all orders ajax
+    Route::get('all-orders-admin', 'OrderController@adminOdersShowAjax')->name('get.orders.admin-ajax');
+});
+
+
+

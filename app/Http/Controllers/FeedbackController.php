@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Feedback;
+use App\Mail\FeedbackMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
@@ -37,7 +39,7 @@ class FeedbackController extends Controller
                 })
                 ->addColumn('action', function($item){
                     return '
-                    <a href="' . '" target="_blank" class="btn btn-success">відповісти</button>
+                    <a href="' . route('feedbacks.show', ['feedback' => $item->id]) . '" target="_blank" class="btn btn-success">відповісти</button>
                     ';
                 })
                 ->rawColumns(['attachment', 'action'])
@@ -73,7 +75,37 @@ class FeedbackController extends Controller
 
     public function show($id)
     {
-        //
+        $feedback = Feedback::findOrFail($id);
+
+        return view('feedback-answer', compact('feedback'));
+    }
+
+    public function answer(Request $request)
+    {
+        $valid = $request->validate([
+            'description' => ['required', 'string', 'min:10', 'max:40000']
+        ]);
+
+        $feedback_old = Feedback::findOrFail($request->input('id'));
+
+        $feedback = (object) '';
+        $feedback->user_name = $feedback_old->user->username;
+        $feedback->title = $feedback_old->title;
+        $feedback->answer = $valid['description'];
+        
+        try { 
+
+            Mail::to($feedback_old->user->email)->send(new FeedbackMail($feedback));
+
+            $feedback_old->delete();
+
+            return redirect()->route('feedbacks.index');
+        } catch (\Throwable $th) {
+            dd($th->getMessage());
+            return redirect()->route('feedbacks.index');
+        }
+
+        return redirect()->route('feedbacks.index');
     }
 
 }

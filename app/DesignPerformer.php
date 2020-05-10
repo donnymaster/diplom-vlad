@@ -13,11 +13,17 @@ class DesignPerformer extends Model
         'surname',
         'description',
         'design_type_id',
-        'avatar'
+        'avatar',
+        'rating'
     ];
 
     public function order()
     {
         return $this->hasOne(Order::class, 'design_performer_id');
+    }
+
+    public function typeDesign()
+    {
+        return $this->belongsTo(DesignType::class, 'design_type_id');
     }
 }

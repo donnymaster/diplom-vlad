@@ -14,6 +14,7 @@
     {{-- <script src="{{ asset('js/rating.js') }}"></script> --}}
 
     <!-- Fonts -->
+    {{-- @yield('in-top-css') --}}
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
 

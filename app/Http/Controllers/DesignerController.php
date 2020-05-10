@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\DesignPerformer;
+use App\Services\ServiceFilterItems;
 use Illuminate\Contracts\Cache\Store;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Yajra\DataTables\DataTables;
 
 class DesignerController extends Controller
 {
@@ -24,10 +27,12 @@ class DesignerController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         // добавить сортировку элементов
-        $designers = DesignPerformer::paginate(15);
+        $designers = ServiceFilterItems::filter(
+            DesignPerformer::class, 
+            $request->all())->withPath('designers');
 
         return view('designers', compact('designers')); // вывод всех дизайнеров
     }
@@ -59,6 +64,8 @@ class DesignerController extends Controller
             'design_type_id' => ['required', 'integer', 'exists:design_types,id'],
             'avatar-logo' => ['required', 'file']
         ]); 
+
+        $valid['rating'] = 0.0;
 
         try {
             $valid['avatar'] = Storage::putFile('public/designers', $valid['avatar-logo']);
@@ -93,8 +100,9 @@ class DesignerController extends Controller
      */
     public function edit($id)
     {
-        // форма редактирования
-        return view('edit-designer');
+        $designer = DesignPerformer::findOrFail($id);
+
+        return view('edit-designer', compact('designer'));
     }
 
     /**
@@ -106,7 +114,31 @@ class DesignerController extends Controller
      */
     public function update(Request $request, $id)
     {
-         // валидация того что пришло и редактирование
+        $designer = DesignPerformer::findOrFail($id);
+         // валидация того что пришло и создания
+        $valid = $request->validate([
+            'name' => ['required', 'min:4', 'max:255'],
+            'surname' => ['required', 'min:4', 'max:255'],
+            'description' => ['required', 'string', 'min:10', 'max:40000'],
+            'design_type_id' => ['required', 'integer', 'exists:design_types,id']
+        ]); 
+
+        try {
+            if(isset($request['avatar-logo'])){
+                if($designer->avatar != ""){
+                    // delete designer avatar old
+                    Storage::delete('public/designers/' . explode('/', $designer->avatar)[2]);
+                }
+                $valid['avatar'] = Storage::putFile('public/designers', $request['avatar-logo']);
+            }
+
+            $designer->update($valid);
+
+        } catch (\Throwable $th) {
+            return back()->with('update', $th->getMessage());
+        }
+
+        return back()->with('update', 'Дизайнер оновлений');
     }
 
     /**
@@ -134,4 +166,33 @@ class DesignerController extends Controller
                 ->get();
         return response()->json($data);
     }
+
+    public function alldesigerAdmin()
+    {
+        return view('admin-desgners');
+    }
+
+    public function alldesigerAdminAjax(Request $request)
+    {
+        
+        $designers = DataTables::of(
+            DesignPerformer::with('typeDesign')->select('design_performer.*'))
+                ->addColumn('typeDesign', function($item){
+                    return $item->typeDesign->design_name;
+                })
+                ->editColumn('description', function($item){
+                    return Str::limit($item->description, 25);
+                })
+                ->addColumn('action', function($item){
+                    return '
+                    <a href="' . route('designers.edit', ['designer' => $item->id]) . '" target="_blank" class="btn btn-success">редагувати</button>
+                    ';
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+
+        return $designers;
+            
+    }
+
 }

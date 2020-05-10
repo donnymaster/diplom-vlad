@@ -12,14 +12,16 @@ class OrderController extends Controller
 {
     public function __construct()
     {
-        // $this->middleware('admin')->only([
-        //     'edit',
-        //     'update'
-        // ]);  
+        $this->middleware('admin')->only([
+            'adminOdersShowAjax',
+            'adminOdersShow'
+        ]);  
         $this->middleware('auth')->only([
             'index',
             'create',
-            'store'
+            'store',
+            'show',
+            'orderAjaxUser'
         ]) ;
     }
 
@@ -107,28 +109,6 @@ class OrderController extends Controller
         return view('order');
     }
 
-    // /**
-    //  * Show the form for editing the specified resource.
-    //  *
-    //  * @param  int  $id
-    //  * @return \Illuminate\Http\Response
-    //  */
-    // public function edit($id)
-    // {
-    //     //
-    // }
-
-    // /**
-    //  * Update the specified resource in storage.
-    //  *
-    //  * @param  \Illuminate\Http\Request  $request
-    //  * @param  int  $id
-    //  * @return \Illuminate\Http\Response
-    //  */
-    // public function update(Request $request, $id)
-    // {
-    //     //
-    // }
 
     /**
      * Remove the specified resource from storage.
@@ -140,6 +120,8 @@ class OrderController extends Controller
     {
         $this->authorize('delete', Order::class); // policy
 
+        // если статус у нее уже закончен
+
         $order = Order::findOrFail($id);
 
         $order->delete();
@@ -147,4 +129,37 @@ class OrderController extends Controller
         return back()->with('delete', 'Замовлення видалено');
         
     }
+
+    public function adminOdersShow()
+    {
+        return view('admin-orders');
+    }
+
+    public function adminOdersShowAjax()
+    {
+        $orders = DataTables::of(
+            Order::with(['designer', 'typeDesign'])->select('order.*'))
+                ->addColumn('designer', function($item){
+                    return $item->designer->name . " " . $item->designer->surname;
+                })
+                ->addColumn('typeDesign', function($item){
+                    return $item->typeDesign->design_name;
+                })
+                ->editColumn('description', function($item){
+                    return Str::limit($item->description, 25);
+                })
+                ->filterColumn('designer', function($query, $keyword) {
+                    $query->havingRaw('LOWER(designer) LIKE ?', ["%{$keyword}%"]);
+                })
+                ->addColumn('action', function($item){
+                    return '
+                    <a href="' . route('orders.show', ['order' => $item->id]) . '" target="_blank" class="btn btn-success">відкрити</button>
+                    ';
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+
+        return $orders;
+    }
+
 }

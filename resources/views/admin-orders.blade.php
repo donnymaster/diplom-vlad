@@ -6,33 +6,23 @@
 @endsection
 
 @section('content')
-    @if (session('feedback'))
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-md-12">
-                    <div class="alert alert-success text-center" role="alert">
-                        {{ session('feedback') }}
-                    </div>
-                </div>
-            </div>
-        </div>
-    @endif
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-12">
             <div class="card">
-                <div class="card-header text-center">Питання користувачів</div>
+                <div class="card-header text-center">Ваші замовлення</div>
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered" style="width:100%" id="orders">
                             <thead>
                                 <tr>
                                     <th>id</th>
-                                    <th>Користувач</th>
-                                    <th>Тема</th>
-                                    <th>Повідомлення</th>
-                                    <th>Доп. матеріали</th>
-                                    <th>Відповісти</th>
+                                    <th>Дизайнер</th>
+                                    <th>Вид дизайна</th>
+                                    <th>Названия</th>
+                                    <th>Описания</th>
+                                    <th>Цена</th>
+                                    <th>Дія</th>
                                 </tr>
                             </thead>
                         </table>
@@ -71,13 +61,14 @@
                 processing: true,
                 serverSide: true,
                 ordering: true,
-                ajax: '{!! route('get-feedback') !!}',
+                ajax: '{!! route('get.orders.admin-ajax') !!}',
                 columns: [
                     { data: 'id', name: 'id' },
-                    { data: 'user', name: 'user.name' , searchable: true},
+                    { data: 'designer', name: 'designer.name' , searchable: true},
+                    { data: 'typeDesign', name: 'typeDesign.design_name' },
                     { data: 'title', name: 'title' },
                     { data: 'description', name: 'description' },
-                    { data: 'attachment', name: 'attachment', orderable: false, searchable: false},
+                    { data: 'cost', name: 'cost' },
                     {data: 'action', name: 'action', orderable: false, searchable: false}
                 ]
             });
