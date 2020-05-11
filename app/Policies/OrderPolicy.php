@@ -18,7 +18,7 @@ class OrderPolicy
      */
     public function viewAny(User $user)
     {
-        //
+        
     }
 
     /**
@@ -30,7 +30,8 @@ class OrderPolicy
      */
     public function view(User $user, Order $order)
     {
-        //
+        // dd($user->id === $order->customer_id);
+        return ($user->id == $order->customer_id);
     }
 
     /**
@@ -92,10 +93,10 @@ class OrderPolicy
         //
     }
 
-    // full access
-    public function before($user, $ability){
-
-        return $user->role->role_name === 'admin';
-
+    public function before($user, $ability)
+    {
+        if ($user->role->role_name == 'admin') {
+            return true;
+        }
     }
 }

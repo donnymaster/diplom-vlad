@@ -14,4 +14,9 @@ class Correspondence extends Model
         'broadcast_identifier'
     ];
 
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
 }

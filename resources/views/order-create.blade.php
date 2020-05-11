@@ -113,9 +113,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/corejs-typeahead/1.2.1/bloodhound.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/corejs-typeahead/1.2.1/typeahead.jquery.min.js"></script>
     <script>
-        var path = "{{ route('get-designers') }}";
+        var path = "{{ route('get-designers-ajax') }}";
         var get_query = new Bloodhound({
-            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+            datumTokenizer: Bloodhound.tokenizers.whitespace("name"),
             queryTokenizer: Bloodhound.tokenizers.whitespace,
             remote: {
                 url: `${path}?query=`,
@@ -123,7 +123,8 @@
                     var design_type = $('#exampleFormControlSelect1 option:checked').val();                
                     settings.url = this.url + query + '&type_disegn=' + design_type;
                     return settings;
-            }}
+            }
+            }
         });
 
         $('#design_performer').typeahead(

@@ -46,4 +46,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(Feedback::class, 'user_id');
     }
+
+    public function message()
+    {
+        return $this->hasMany(Correspondence::class, 'user_id');
+    }
 }

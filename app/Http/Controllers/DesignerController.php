@@ -6,6 +6,7 @@ use App\DesignPerformer;
 use App\Services\ServiceFilterItems;
 use Illuminate\Contracts\Cache\Store;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Yajra\DataTables\DataTables;
@@ -164,6 +165,7 @@ class DesignerController extends Controller
                     ["design_type_id", "=", $request->input('type_disegn')]
                 ])
                 ->get();
+        
         return response()->json($data);
     }
 
